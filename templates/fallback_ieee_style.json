@@ -1,0 +1,57 @@
+{
+  "body_text": {
+    "font_name": "Times New Roman",
+    "font_size": 11,
+    "alignment": "justify"
+  },
+  "section_heading": {
+    "font_name": "Times New Roman",
+    "font_size": 10,
+    "bold": true,
+    "alignment": "left",
+    "all_caps": true
+  },
+  "figure_caption": {
+    "font_name": "Times New Roman",
+    "font_size": 10,
+    "bold": false,
+    "italic": false,
+    "alignment": "center",
+    "pattern": "Fig. 1. Caption text"
+  },
+  "table_number": {
+    "font_name": "Times New Roman",
+    "font_size": 10,
+    "bold": false,
+    "italic": false,
+    "alignment": "center",
+    "all_caps": true,
+    "pattern": "TABLE I"
+  },
+  "table_caption": {
+    "font_name": "Times New Roman",
+    "font_size": 10,
+    "bold": false,
+    "italic": false,
+    "alignment": "center",
+    "all_caps": true,
+    "pattern": "EXAMPLE TABLE CAPTION"
+  },
+  "equation": {
+    "font_name": "Times New Roman",
+    "font_size": 11,
+    "alignment": "center",
+    "pattern": "expression + (1)"
+  },
+  "equation_number": {
+    "font_name": "Times New Roman",
+    "font_size": 11,
+    "alignment": "right",
+    "pattern": "(1)"
+  },
+  "references": {
+    "font_name": "Times New Roman",
+    "font_size": 10,
+    "alignment": "left"
+  }
+}

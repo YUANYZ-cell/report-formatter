@@ -1,0 +1,27 @@
+{
+  "profile_name": "Custom",
+  "profile_key": "custom",
+  "figure": {
+    "prefix": "Fig.",
+    "number_style": "arabic",
+    "separator_after_number": ".",
+    "caption_position": "below"
+  },
+  "table": {
+    "prefix": "Table",
+    "number_style": "roman_upper",
+    "caption_position": "above",
+    "number_line_only": false,
+    "caption_text_uppercase": false,
+    "separator_after_number": "."
+  },
+  "equation": {
+    "number_style": "arabic",
+    "wrapper": "parentheses"
+  },
+  "references": {
+    "figure": "Fig. {n}",
+    "table": "Table {table_n}",
+    "equation": "{equation_n}"
+  }
+}

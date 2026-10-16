@@ -1,0 +1,41 @@
+# Personal data and local state
+data/
+runtime-data/
+config/settings.json
+runtime.json
+我的代码/
+学习资料/
+资料准备/
+backups/
+.backup/
+*.db
+*.db-*
+*.sqlite*
+*.lnk
+.env
+.env.*
+!.env.example
+# Generated output
+.local/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+node_modules/
+dist/
+release/
+out/
+output/
+artifacts/
+logs/
+**/bin/
+**/obj/
+*.tsbuildinfo
+.pytest_cache/
+test-results/
+playwright-report/
+# Agent state
+.codex/
+.agents/
+.workbuddy/
+.superpowers/

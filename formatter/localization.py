@@ -1,0 +1,650 @@
+from __future__ import annotations
+
+import logging
+
+
+LOGGER = logging.getLogger(__name__)
+
+
+LANGUAGE_NAMES = {
+    "en": {"en": "English", "zh": "Chinese", "unknown": "Unknown"},
+    "zh": {"en": "英文", "zh": "中文", "unknown": "未知"},
+}
+
+
+UI_TEXT = {
+    "en": {
+        "app_title": "Template-aware Lab Report Formatter",
+        "app_caption": "Rule-based .docx formatting plus .pdf analysis, numbering, and reference checks for lab reports.",
+        "settings": "Settings",
+        "ui_language": "UI Language",
+        "report_language": "Report Language",
+        "format_profile": "Formatting Profile",
+        "processing_mode": "Processing Mode",
+        "input_files": "Input Files",
+        "upload_report": "Upload report (.docx or .pdf)",
+        "upload_template": "Upload optional style template (.docx)",
+        "detected_language": "Detected report language",
+        "final_language": "Final report language",
+        "confidence": "Confidence",
+        "chinese_chars": "Chinese characters",
+        "english_words": "English words",
+        "language_unknown_warning": "Language detection is uncertain. Choose English or Chinese manually for document-facing placeholders and reference checks.",
+        "style_source": "Style Source",
+        "options": "Options",
+        "preserve_cover": "Preserve cover page",
+        "preserve_two_column": "Preserve two-column layout",
+        "insert_placeholders": "Insert placeholder captions if missing",
+        "renumber_figures": "Renumber figures",
+        "renumber_tables": "Renumber tables",
+        "renumber_equations": "Renumber equations",
+        "equation_auto_edit_suspended_notice": "Automatic equation renumbering is suspended for safety. Existing equation numbers are preserved; detected equation issues are reported for manual review only.",
+        "check_references": "Check in-text references",
+        "generate_report": "Generate check report",
+        "run": "Run formatter",
+        "waiting": "Upload a Word report to format, or a PDF to analyze language, captions, equations, and references.",
+        "pdf_analysis_only": "PDF analysis mode: the tool reads extractable text and page locations only. It does not modify the PDF or create a formatted DOCX.",
+        "processing": "Processing report...",
+        "no_template_warning": "No template was uploaded, so the report itself was used as the style source.",
+        "metric_figures": "Figures",
+        "metric_tables": "Tables",
+        "metric_equations": "Equations",
+        "metric_issues": "Issues",
+        "tab_profile": "Style Profile",
+        "tab_objects": "Detected Objects",
+        "tab_issues": "Issues",
+        "tab_downloads": "Downloads",
+        "raw_profile": "Raw style profile",
+        "figures": "Figures",
+        "tables": "Tables",
+        "equations": "Equations",
+        "no_reference_issues": "No reference issues were found by the rule-based checker.",
+        "manual_review": "Manual review",
+        "actions": "Formatting actions",
+        "download_docx": "Download current formatted DOCX",
+        "download_report": "Download current check report",
+        "report_preview": "Check report preview",
+        "custom_settings": "Custom format settings",
+        "figure_prefix": "Figure prefix",
+        "figure_number_style": "Figure number style",
+        "figure_separator": "Figure separator",
+        "table_prefix": "Table prefix",
+        "table_number_style": "Table number style",
+        "table_layout": "Table caption layout",
+        "equation_format": "Equation number format",
+        "none_detected": "None detected",
+        "role": "Role",
+        "font": "Font",
+        "size": "Size",
+        "bold": "Bold",
+        "italic": "Italic",
+        "alignment": "Alignment",
+        "source": "Source",
+        "pattern": "Recognition Mode",
+        "number": "Number",
+        "paragraph": "Paragraph",
+        "text": "Text",
+        "severity": "Severity",
+        "category": "Category",
+        "message": "Message",
+        "image": "Image",
+        "file": "File",
+        "classification": "Classification",
+        "kind": "Kind",
+        "before": "Before",
+        "after": "After",
+        "items": "items",
+        "errors": "errors",
+        "warnings": "warnings",
+        "reviews": "review",
+        "expand_all": "Expand all",
+        "collapse_all": "Collapse all",
+        "issue_group_table": "Table issues",
+        "issue_group_image": "Image issues",
+        "issue_group_equation": "Equation issues",
+        "issue_group_reference_numbering": "Reference / numbering",
+        "issue_group_format_style": "Format / style changes",
+        "issue_group_manual_review": "Manual review",
+        "issue_group_unresolved_images": "Unresolved images / OCR failed",
+        "issue_group_other": "Other issues",
+        "image_table": "Image table",
+        "image_figure": "Image figure",
+        "unresolved_image": "Unresolved image",
+        "ocr_unavailable": "OCR unavailable",
+        "image_scan": "Image scan",
+        "current_download_run_id": "Current download run_id",
+        "runtime_diagnostics": "Runtime diagnostics",
+        "auto": "Auto",
+        "english": "English",
+        "chinese": "Chinese",
+        "template_missing_note": "Template-matching is recommended when reports share a stable lab template.",
+        "default_notes": "Default notes",
+        "default_report_language_note": "Default: Auto. The app detects the report language and uses it for placeholders and reference checks.",
+        "default_profile_note": "Default: Template-matching. It preserves the uploaded report/template naming style when it is consistent.",
+        "default_mode_note": "Default: Analyze only. It scans and reports issues without changing the Word file.",
+        "default_style_source_note": "Default: Auto-detect from uploaded report. Use a template only when you upload one.",
+        "default_options_note": "Default options preserve layout, renumber detected objects, check references, and generate a report; placeholder insertion is off.",
+        "target_report_title": "1. Target report",
+        "target_report_desc": "Required. Upload the lab report that you want to analyze or format.",
+        "style_template_title": "2. Style template",
+        "style_template_desc": "Optional. Upload a Word template only when formatting should follow a separate template.",
+        "required_badge": "Required",
+        "optional_badge": "Optional",
+        "card_detected_language_title": "Detected Report Language",
+        "card_detected_language_caption": "Inferred from Chinese character and English word counts.",
+        "card_final_language_title": "Final Report Language Used",
+        "card_final_language_caption": "Used for placeholders and reference checks; you can override it in the sidebar.",
+        "card_confidence_title": "Language Detection Confidence",
+        "card_confidence_caption": "Closer to 1 means the detected language is more reliable.",
+        "card_english_words_title": "English Word Count",
+        "card_english_words_caption": "Used to judge the report language.",
+        "card_chinese_chars_title": "Chinese Character Count",
+        "card_chinese_chars_caption": "Used to judge the report language.",
+        "card_figures_title": "Detected Figure Captions",
+        "card_figures_caption": "Number of recognized figure captions.",
+        "card_tables_title": "Detected Table Captions",
+        "card_tables_caption": "Native, image-based, caption-only, and uncertain table candidates.",
+        "card_native_tables_title": "Native Table Count",
+        "card_native_tables_caption": "Tables parsed directly from Word, HTML, or PDF text structure.",
+        "card_image_tables_title": "Image Table Count",
+        "card_image_tables_caption": "Tables identified from image regions, OCR, or visual detection.",
+        "card_equation_blocks_title": "Equation Block Count",
+        "card_equation_blocks_caption": "Total display equation blocks detected in the report.",
+        "card_equation_numbers_title": "Equation Number Count",
+        "card_equation_numbers_caption": "Valid equation numbers detected on equation blocks.",
+        "card_unnumbered_equations_title": "Unnumbered Equation Count",
+        "card_unnumbered_equations_caption": "Equations detected without an equation number.",
+        "card_reference_citations_title": "Reference Citation Count",
+        "card_reference_citations_caption": "In-text IEEE reference citations detected in the report body.",
+        "card_skipped_toc_title": "Skipped TOC Item Count",
+        "card_skipped_toc_caption": "Contents, list-of-figures, and list-of-tables items excluded from body checks.",
+        "card_equations_title": "Detected Equation Numbers",
+        "card_equations_caption": "Number of equation labels recognized, such as (1).",
+        "card_issues_title": "Issues Found",
+        "card_issues_caption": "Includes numbering, reference, duplicate, and missing-item problems.",
+        "stats_help_title": "What do these statistics mean?",
+        "stats_help_body": "These statistics help you verify whether the tool has correctly read the Word report.\n\n- The detected report language is inferred from Chinese character and English word counts.\n- The final report language affects placeholders, reference checks, and the check report.\n- Figure and table counts come from the classified object inventory.\n- Equation blocks and equation numbers are counted separately from IEEE reference citations.\n- The issue count includes numbering, reference, duplicate, and missing-item problems.",
+        "developer_debug_info": "Developer debug info",
+        "raw_regex_patterns": "Raw recognition patterns",
+        "yes": "Yes",
+        "no": "No",
+        "unknown": "Unknown",
+        "not_detected": "Not detected",
+        "not_applicable": "Not applicable",
+        "recognition_inferred_body": "Inferred body text",
+        "recognition_inferred_heading": "Inferred heading style",
+        "recognition_figure_regex": "Figure caption regex",
+        "recognition_table_number_regex": "Table number regex",
+        "recognition_table_caption_after_number": "Table caption after table number",
+        "recognition_equation_regex": "Equation number regex",
+        "recognition_fallback": "Fallback style rule",
+        "recognition_template": "Template style source",
+        "recognition_uploaded_report": "Uploaded report style source",
+        "issue_preview_title": "Issue preview",
+        "comparison_preview_title": "Comparison preview",
+        "open_issue_preview": "Open Issue Preview",
+        "open_comparison_preview": "Open Comparison Preview",
+        "open_issue_preview_help": "View detected issue locations in the original file.",
+        "open_comparison_preview_help": "Compare the original and modified files before export.",
+        "preview_missing_original": "Upload the original report before opening preview.",
+        "preview_run_required": "Run analysis before opening preview.",
+        "preview_stale_settings": "Settings changed after the latest run. Re-run before preview.",
+        "preview_missing_modified": "Generate the modified DOCX before opening comparison preview.",
+        "preview_converter_unavailable": "High-fidelity preview needs Microsoft Word, LibreOffice, or Gotenberg.",
+        "preview_renderer_unavailable": "High-fidelity page rendering needs pdftoppm.",
+        "preview_route_unavailable": "No usable preview route is available.",
+        "preview_ready": "Preview ready",
+        "preview_low_fidelity_ready": "Low-fidelity preview ready",
+        "preparing_preview": "Preparing preview...",
+        "preview_generation_failed": "Preview generation failed",
+        "return_analysis_results": "Return to results",
+        "return_previous_level": "Back",
+        "previous_page": "Previous",
+        "next_page": "Next",
+        "page_number": "Page",
+        "total_pages": "Total pages",
+        "zoom": "Zoom",
+        "preview_performance": "Preview diagnostics",
+        "preview_page_not_cached": "Queued on demand",
+        "page_thumbnails": "Page thumbnails",
+        "current_page_issues": "This page's issues",
+        "current_page_changes": "This page's changes",
+        "original_file": "Original file",
+        "modified_file": "Modified file",
+        "show_issue_markers": "Show issue markers",
+        "show_structured_changes": "Show structured changes",
+        "side_by_side_comparison": "Side-by-side",
+        "modified_preview": "Modified preview",
+        "difference_view": "Difference view",
+        "comparison_view_mode": "View mode",
+        "sync_scroll": "Sync scroll",
+        "sync_zoom": "Sync zoom",
+        "approximate_location": "Approximate location",
+        "located": "Located",
+        "no_page_issues": "No issues are mapped to this page.",
+        "no_page_changes": "No changes are mapped to this page.",
+        "pixel_diff_deferred": "Pixel-level diff is not enabled in this Streamlit phase; structured change markers are shown instead.",
+        "pixel_diff_active": "Pixel-level difference markers are generated from the rendered original and modified pages. Unlocated structured records are listed only on the right.",
+        "pixel_diff_unavailable": "No reliable pixel-level difference marker is available for this page. Structured records are listed only on the right.",
+        "download_after_preview_note": "Check the comparison preview before exporting the modified DOCX.",
+        "download_waiting_for_preview": "Generate the comparison preview for this version before downloading.",
+        "analyze_mode_no_docx_download": "Analyze mode does not create a modified DOCX. Use the check report for review.",
+        "generating": "Generating...",
+    },
+    "zh": {
+        "app_title": "实验报告格式化工具",
+        "app_caption": "基于规则的 .docx 实验报告格式、编号与文内引用检查工具。",
+        "settings": "设置",
+        "ui_language": "界面语言",
+        "report_language": "报告语言",
+        "format_profile": "格式规则",
+        "processing_mode": "处理模式",
+        "input_files": "输入文件",
+        "upload_report": "上传实验报告（.docx 或 .pdf）",
+        "upload_template": "上传可选样式模板（.docx）",
+        "detected_language": "自动识别的报告语言",
+        "final_language": "最终使用的报告语言",
+        "confidence": "置信度",
+        "chinese_chars": "中文字符数",
+        "english_words": "英文单词数",
+        "language_unknown_warning": "报告语言识别不确定。请手动选择英文或中文，以便生成合适的占位题注和引用检查建议。",
+        "style_source": "样式来源",
+        "options": "选项",
+        "preserve_cover": "保留封面页",
+        "preserve_two_column": "保留双栏版式",
+        "insert_placeholders": "缺少题注时插入占位题注",
+        "renumber_figures": "重编图题编号",
+        "renumber_tables": "重编表题编号",
+        "renumber_equations": "重编公式编号",
+        "equation_auto_edit_suspended_notice": "\u4e3a\u907f\u514d\u8bef\u6539\uff0c\u516c\u5f0f\u81ea\u52a8\u91cd\u7f16\u53f7\u5df2\u6682\u505c\u3002\u73b0\u6709\u516c\u5f0f\u7f16\u53f7\u5c06\u4fdd\u6301\u4e0d\u53d8\uff0c\u68c0\u6d4b\u5230\u7684\u516c\u5f0f\u95ee\u9898\u4ec5\u8fdb\u5165\u4eba\u5de5\u590d\u6838\u3002",
+        "check_references": "检查文内引用",
+        "generate_report": "生成检查报告",
+        "run": "运行格式化",
+        "waiting": "上传 Word 报告可进行格式化；上传 PDF 可分析语言、题注、公式和文内引用。",
+        "pdf_analysis_only": "PDF 仅分析模式：工具只读取可提取文本和页码位置，不会修改 PDF，也不会生成格式化 DOCX。",
+        "processing": "正在处理报告...",
+        "no_template_warning": "未上传样式模板，已改为从目标报告自动识别样式。",
+        "metric_figures": "图题",
+        "metric_tables": "表题",
+        "metric_equations": "公式",
+        "metric_issues": "问题",
+        "tab_profile": "样式画像",
+        "tab_objects": "检测对象",
+        "tab_issues": "问题列表",
+        "tab_downloads": "下载结果",
+        "raw_profile": "原始样式画像",
+        "figures": "图题",
+        "tables": "表题",
+        "equations": "公式",
+        "no_reference_issues": "规则检查未发现文内引用问题。",
+        "manual_review": "人工复核",
+        "actions": "已执行的格式化动作",
+        "download_docx": "下载本次格式化 DOCX",
+        "download_report": "下载本次检查报告",
+        "report_preview": "检查报告预览",
+        "custom_settings": "自定义格式设置",
+        "figure_prefix": "图题前缀",
+        "figure_number_style": "图题编号格式",
+        "figure_separator": "图题编号分隔符",
+        "table_prefix": "表题前缀",
+        "table_number_style": "表题编号格式",
+        "table_layout": "表题布局",
+        "equation_format": "公式编号格式",
+        "none_detected": "未检测到",
+        "role": "角色",
+        "font": "字体",
+        "size": "字号",
+        "bold": "加粗",
+        "italic": "斜体",
+        "alignment": "对齐",
+        "source": "来源",
+        "pattern": "识别模式",
+        "number": "编号",
+        "paragraph": "段落",
+        "text": "文本",
+        "severity": "级别",
+        "category": "类别",
+        "message": "说明",
+        "image": "图片",
+        "file": "文件",
+        "classification": "分类",
+        "kind": "类型",
+        "before": "修改前",
+        "after": "修改后",
+        "items": "项",
+        "errors": "错误",
+        "warnings": "警告",
+        "reviews": "复核",
+        "expand_all": "全部展开",
+        "collapse_all": "全部收起",
+        "issue_group_table": "表格问题",
+        "issue_group_image": "图片问题",
+        "issue_group_equation": "公式问题",
+        "issue_group_reference_numbering": "引用与编号",
+        "issue_group_format_style": "格式与样式修改",
+        "issue_group_manual_review": "人工复核",
+        "issue_group_unresolved_images": "未解析图片 / OCR 失败",
+        "issue_group_other": "其他问题",
+        "image_table": "图片表格",
+        "image_figure": "图片图形",
+        "unresolved_image": "未解析图片",
+        "ocr_unavailable": "OCR 不可用",
+        "image_scan": "图片扫描",
+        "current_download_run_id": "当前下载 run_id",
+        "runtime_diagnostics": "运行诊断",
+        "auto": "自动",
+        "english": "英文",
+        "chinese": "中文",
+        "template_missing_note": "报告长期沿用同一实验模板时，推荐使用模板匹配模式。",
+        "default_notes": "默认说明",
+        "default_report_language_note": "默认：自动。系统识别报告语言，并用于占位题注和引用检查。",
+        "default_profile_note": "默认：模板匹配。尽量保留上传报告或模板里已有且一致的命名风格。",
+        "default_mode_note": "默认：仅分析。只扫描并报告问题，不修改 Word 文件。",
+        "default_style_source_note": "默认：从上传报告自动识别。只有上传单独模板时才需要使用模板作为样式来源。",
+        "default_options_note": "默认选项会保留版式、重编号已检测对象、检查引用并生成报告；缺失题注占位符默认不插入。",
+        "target_report_title": "1. 目标报告",
+        "target_report_desc": "必选。上传需要分析或格式化的实验报告。",
+        "style_template_title": "2. 样式模板",
+        "style_template_desc": "可选。只有需要跟随单独 Word 模板格式时才上传。",
+        "required_badge": "必选",
+        "optional_badge": "可选",
+        "card_detected_language_title": "自动识别的报告语言",
+        "card_detected_language_caption": "根据文档中的中英文字符数量自动判断。",
+        "card_final_language_title": "最终使用的报告语言",
+        "card_final_language_caption": "用于占位符和引用检查；可在左侧手动覆盖。",
+        "card_confidence_title": "语言识别置信度",
+        "card_confidence_caption": "越接近 1，说明识别结果越可靠。",
+        "card_english_words_title": "英文单词数",
+        "card_english_words_caption": "用于判断报告语言。",
+        "card_chinese_chars_title": "中文字符数",
+        "card_chinese_chars_caption": "用于判断报告语言。",
+        "card_figures_title": "检测到的图题",
+        "card_figures_caption": "已识别的图题数量。",
+        "card_tables_title": "检测到的表题",
+        "card_tables_caption": "原生、图片、仅题注和不确定表格候选的总数。",
+        "card_native_tables_title": "原生表格数量",
+        "card_native_tables_caption": "从 Word、HTML 或 PDF 文本结构中直接解析出的表格数量。",
+        "card_image_tables_title": "图片表格数量",
+        "card_image_tables_caption": "通过图片区域、OCR 或视觉检测识别出的表格数量。",
+        "card_equation_blocks_title": "公式块数量",
+        "card_equation_blocks_caption": "检测到的展示公式块总数。",
+        "card_equation_numbers_title": "公式编号数量",
+        "card_equation_numbers_caption": "检测到的有效公式编号数量。",
+        "card_unnumbered_equations_title": "未编号公式数量",
+        "card_unnumbered_equations_caption": "检测到但没有编号的公式数量。",
+        "card_reference_citations_title": "参考文献引用数量",
+        "card_reference_citations_caption": "检测到的正文引用编号数量。",
+        "card_skipped_toc_title": "已跳过目录项",
+        "card_skipped_toc_caption": "已排除目录、图目录、表目录等不应计入正文检测的项目数量。",
+        "card_equations_title": "检测到的公式编号",
+        "card_equations_caption": "已识别的公式编号数量，例如 (1)。",
+        "card_issues_title": "发现的问题",
+        "card_issues_caption": "包括编号、引用、重复、缺失等问题。",
+        "stats_help_title": "这些统计结果是什么意思？",
+        "stats_help_body": "这些统计结果用于帮助你判断工具是否正确读取了 Word 报告。\n\n- 自动识别的报告语言来自文档中的中英文字符比例。\n- 最终使用的报告语言会影响占位符、引用检查和检查报告语言。\n- 图题、表题、原生表格和图片表格分别来自对象清单分类结果。\n- 公式块、公式编号和参考文献引用会分开统计，避免互相误算。\n- 问题数量表示工具发现的编号、引用、重复或缺失问题。",
+        "developer_debug_info": "开发调试信息",
+        "raw_regex_patterns": "原始识别规则",
+        "yes": "是",
+        "no": "否",
+        "unknown": "未知",
+        "not_detected": "未检测到",
+        "not_applicable": "不适用",
+        "recognition_inferred_body": "自动识别正文",
+        "recognition_inferred_heading": "自动识别标题样式",
+        "recognition_figure_regex": "图题正则识别",
+        "recognition_table_number_regex": "表编号识别",
+        "recognition_table_caption_after_number": "表题：表编号后的下一段",
+        "recognition_equation_regex": "公式编号识别",
+        "recognition_fallback": "默认格式规则",
+        "recognition_template": "模板样式来源",
+        "recognition_uploaded_report": "上传报告样式来源",
+        "issue_preview_title": "问题预览",
+        "comparison_preview_title": "对比预览",
+        "open_issue_preview": "进入问题预览",
+        "open_comparison_preview": "进入对比预览",
+        "open_issue_preview_help": "在原始文件中查看检测到的问题位置。",
+        "open_comparison_preview_help": "对比原文件与修改后文件，确认无误后再导出。",
+        "preview_missing_original": "请先上传原始报告。",
+        "preview_run_required": "请先完成分析。",
+        "preview_stale_settings": "设置已变化，请重新分析后再预览。",
+        "preview_missing_modified": "请先生成修改后的 DOCX。",
+        "preview_converter_unavailable": "高保真预览需要 Microsoft Word、LibreOffice 或 Gotenberg。",
+        "preview_renderer_unavailable": "高保真页面渲染需要 pdftoppm。",
+        "preview_route_unavailable": "当前没有可用的预览路线。",
+        "preview_ready": "预览可用",
+        "preview_low_fidelity_ready": "低保真预览可用",
+        "preparing_preview": "正在准备预览...",
+        "preview_generation_failed": "预览生成失败",
+        "return_analysis_results": "返回分析结果",
+        "return_previous_level": "返回上一级",
+        "previous_page": "上一页",
+        "next_page": "下一页",
+        "page_number": "页码",
+        "total_pages": "总页数",
+        "zoom": "缩放",
+        "preview_performance": "预览诊断",
+        "preview_page_not_cached": "按需加载",
+        "page_thumbnails": "页面缩略图",
+        "current_page_issues": "本页问题",
+        "current_page_changes": "本页修改记录",
+        "original_file": "原始文件",
+        "modified_file": "修改后文件",
+        "show_issue_markers": "显示问题标记",
+        "show_structured_changes": "显示结构化修改",
+        "side_by_side_comparison": "并排对比",
+        "modified_preview": "修改后预览",
+        "difference_view": "差异查看",
+        "comparison_view_mode": "查看模式",
+        "sync_scroll": "同步滚动",
+        "sync_zoom": "同步缩放",
+        "approximate_location": "近似定位",
+        "located": "已定位",
+        "no_page_issues": "本页没有映射到的问题。",
+        "no_page_changes": "本页没有映射到的修改。",
+        "pixel_diff_deferred": "当前 Streamlit 阶段未启用像素级差异；这里展示结构化修改标记。",
+        "pixel_diff_active": "已基于原始页和修改后页的真实渲染图生成像素级差异标记；无法精确定位的结构化记录只在右侧列表显示。",
+        "pixel_diff_unavailable": "本页没有可靠的像素级差异标记；结构化修改记录只在右侧列表显示。",
+        "download_after_preview_note": "请先检查对比预览，再导出修改后的 DOCX。",
+        "download_waiting_for_preview": "请先为当前版本生成对比预览，再下载。",
+        "analyze_mode_no_docx_download": "分析模式不会生成修改后的 DOCX，请下载检查报告进行复核。",
+        "generating": "正在生成...",
+    },
+}
+
+
+STAT_CARD_IDS = (
+    "detected_language",
+    "final_language",
+    "confidence",
+    "english_words",
+    "chinese_chars",
+    "figures",
+    "tables",
+    "native_tables",
+    "image_tables",
+    "equation_blocks",
+    "equation_numbers",
+    "unnumbered_equations",
+    "reference_citations",
+    "skipped_toc",
+    "issues",
+)
+
+STAT_CARD_I18N_KEYS = {
+    card_id: {
+        "title": f"card_{card_id}_title",
+        "caption": f"card_{card_id}_caption",
+    }
+    for card_id in STAT_CARD_IDS
+}
+
+ZH_UI_FALLBACKS = {key: value for key, value in UI_TEXT["zh"].items()}
+
+_MISSING_TRANSLATIONS_LOGGED: set[tuple[str, str]] = set()
+
+MODE_LABELS = {
+    "en": {
+        "Analyze only": "Analyze only",
+        "Fix numbering and formatting": "Fix numbering and formatting",
+        "Fix numbering only": "Fix numbering only",
+        "Check references only": "Check references only",
+    },
+    "zh": {
+        "Analyze only": "仅分析",
+        "Fix numbering and formatting": "修复编号和格式",
+        "Fix numbering only": "仅修复编号",
+        "Check references only": "仅检查文内引用",
+    },
+}
+
+STYLE_SOURCE_LABELS = {
+    "en": {
+        "Auto-detect from uploaded report": "Auto-detect from uploaded report",
+        "Use uploaded template as style source": "Use uploaded template as style source",
+        "Use fallback defaults": "Use fallback defaults",
+    },
+    "zh": {
+        "Auto-detect from uploaded report": "从上传报告自动识别",
+        "Use uploaded template as style source": "使用上传模板作为样式来源",
+        "Use fallback defaults": "使用默认格式",
+    },
+}
+
+PROFILE_LABELS = {
+    "en": {
+        "template_matching": "Template-matching",
+        "ieee": "IEEE",
+        "custom": "Custom",
+    },
+    "zh": {
+        "template_matching": "模板匹配",
+        "ieee": "IEEE",
+        "custom": "自定义",
+    },
+}
+
+ROLE_LABELS = {
+    "en": {
+        "body_text": "Body text",
+        "figure_caption": "Figure captions",
+        "table_number": "Table number",
+        "table_caption": "Table captions",
+        "equation": "Equations",
+    },
+    "zh": {
+        "body_text": "正文",
+        "figure_caption": "图题",
+        "table_number": "表编号",
+        "table_caption": "表题",
+        "equation": "公式",
+    },
+}
+
+CATEGORY_LABELS = {
+    "en": {"figure": "Figure", "table": "Table", "equation": "Equation"},
+    "zh": {"figure": "图", "table": "表", "equation": "公式"},
+}
+
+SEVERITY_LABELS = {
+    "en": {"error": "Error", "warning": "Warning", "change": "Change"},
+    "zh": {"error": "错误", "warning": "警告", "change": "修改"},
+}
+
+ALIGNMENT_LABELS = {
+    "en": {"left": "Left", "center": "Center", "right": "Right", "justify": "Justified"},
+    "zh": {"left": "左对齐", "center": "居中", "right": "右对齐", "justify": "两端对齐"},
+}
+
+NUMBER_STYLE_LABELS = {
+    "en": {
+        "arabic": "Arabic numbers: 1, 2, 3",
+        "roman_upper": "Roman numerals uppercase: I, II, III",
+        "roman_lower": "Roman numerals lowercase: i, ii, iii",
+    },
+    "zh": {
+        "arabic": "阿拉伯数字：1, 2, 3",
+        "roman_upper": "大写罗马数字：I, II, III",
+        "roman_lower": "小写罗马数字：i, ii, iii",
+    },
+}
+
+TABLE_LAYOUT_LABELS = {
+    "en": {
+        "number_line_plus_caption": "TABLE I + CAPTION",
+        "single_line": "Table I. Caption",
+    },
+    "zh": {
+        "number_line_plus_caption": "TABLE I + 标题单独成行",
+        "single_line": "Table I. 标题同行显示",
+    },
+}
+
+EQUATION_WRAPPER_LABELS = {
+    "en": {
+        "parentheses": "(1)",
+        "brackets": "[1]",
+        "eq_parentheses": "Eq. (1)",
+        "equation_parentheses": "Equation (1)",
+    },
+    "zh": {
+        "parentheses": "(1)",
+        "brackets": "[1]",
+        "eq_parentheses": "Eq. (1)",
+        "equation_parentheses": "Equation (1)",
+    },
+}
+
+
+def normalize_ui_language(language: str | None) -> str:
+    return "zh" if language == "zh" else "en"
+
+
+def stat_card_text(language: str, card_id: str, field: str) -> str:
+    key = STAT_CARD_I18N_KEYS.get(card_id, {}).get(field)
+    if key is None:
+        _warn_missing_translation(normalize_ui_language(language), f"card_{card_id}_{field}")
+        return _missing_ui_text(normalize_ui_language(language), f"card_{card_id}_{field}")
+    return t(language, key)
+
+
+def t(language: str, key: str) -> str:
+    language = normalize_ui_language(language)
+    text = UI_TEXT[language].get(key)
+    if text:
+        return text
+    return _missing_ui_text(language, key)
+
+
+def label(mapping: dict[str, dict[str, str]], language: str, key: str) -> str:
+    language = normalize_ui_language(language)
+    return mapping.get(language, {}).get(key) or mapping.get("en", {}).get(key) or _readable_fallback(key)
+
+
+def reverse_label(mapping: dict[str, dict[str, str]], language: str, value: str) -> str:
+    language = normalize_ui_language(language)
+    for key, label_value in mapping.get(language, {}).items():
+        if label_value == value:
+            return key
+    return value
+
+
+def _readable_fallback(key: str) -> str:
+    value = str(key).strip()
+    if not value:
+        return ""
+    return value.replace("_", " ").replace("-", " ").capitalize()
+
+
+def _missing_ui_text(language: str, key: str) -> str:
+    _warn_missing_translation(language, key)
+    if language == "zh":
+        return ZH_UI_FALLBACKS.get(key) or _readable_fallback(key)
+    return _readable_fallback(key)
+
+
+def _warn_missing_translation(language: str, key: str) -> None:
+    marker = (language, key)
+    if marker in _MISSING_TRANSLATIONS_LOGGED:
+        return
+    _MISSING_TRANSLATIONS_LOGGED.add(marker)
+    LOGGER.warning("Missing %s UI translation for key: %s", language, key)

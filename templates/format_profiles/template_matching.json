@@ -1,0 +1,31 @@
+{
+  "profile_name": "Template-matching",
+  "profile_key": "template_matching",
+  "preserve_detected_naming": true,
+  "figure": {
+    "prefix": "Fig.",
+    "number_style": "arabic",
+    "separator_after_number": ".",
+    "caption_position": "below",
+    "example": "Fig. 1. Caption text"
+  },
+  "table": {
+    "prefix": "Table",
+    "number_style": "roman_upper",
+    "caption_position": "above",
+    "number_line_only": false,
+    "caption_text_uppercase": false,
+    "separator_after_number": ".",
+    "example": "Table I. Caption text"
+  },
+  "equation": {
+    "number_style": "arabic",
+    "wrapper": "parentheses",
+    "example": "(1)"
+  },
+  "references": {
+    "figure": "Fig. {n}",
+    "table": "Table {table_n}",
+    "equation": "{equation_n}"
+  }
+}

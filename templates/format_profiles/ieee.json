@@ -1,0 +1,29 @@
+{
+  "profile_name": "IEEE",
+  "profile_key": "ieee",
+  "figure": {
+    "prefix": "Fig.",
+    "number_style": "arabic",
+    "separator_after_number": ".",
+    "caption_position": "below",
+    "example": "Fig. 1. Caption text"
+  },
+  "table": {
+    "prefix": "TABLE",
+    "number_style": "roman_upper",
+    "caption_position": "above",
+    "number_line_only": true,
+    "caption_text_uppercase": true,
+    "example": "TABLE I"
+  },
+  "equation": {
+    "number_style": "arabic",
+    "wrapper": "parentheses",
+    "example": "(1)"
+  },
+  "references": {
+    "figure": "Fig. {n}",
+    "table": "Table {roman}",
+    "equation": "{equation_n}"
+  }
+}
